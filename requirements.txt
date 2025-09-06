@@ -16,3 +16,4 @@ httpx==0.28.1
 email-validator
 psutil
 pyotp
+jwt
