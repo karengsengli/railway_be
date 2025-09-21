@@ -5,7 +5,6 @@ from .companies.router import router as companies_router
 from .lines.router import router as lines_router
 from .stations.router import router as stations_router
 from .routes.router import router as routes_router
-from .fare_rules.router import router as fare_rules_router
 from .tickets.router import router as tickets_router
 from .journeys.router import router as journeys_router
 from .distance_calculation.router import router as distance_calculation_router
@@ -39,7 +38,6 @@ app.include_router(lines_router, prefix="/api/lines", tags=["Lines"])
 app.include_router(stations_router, prefix="/api/stations", tags=["Stations"])
 app.include_router(routes_router, prefix="/api/routes", tags=["Routes"])
 app.include_router(distance_calculation_router, prefix="/api/distance", tags=["Distance Calculation"])
-app.include_router(fare_rules_router, prefix="/api/fare-rules", tags=["Fare Rules"])
 app.include_router(tickets_router, prefix="/api/tickets", tags=["Tickets"])
 app.include_router(journeys_router, prefix="/api/journeys", tags=["Journeys"])
 app.include_router(route_management_router, prefix="/api")

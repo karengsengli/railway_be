@@ -89,7 +89,6 @@ class TrainLine(Base):
     company = relationship("TrainCompany", back_populates="train_lines")
     stations = relationship("Station", back_populates="line")
     routes = relationship("Route", back_populates="line")
-    fare_rules = relationship("FareRule", back_populates="line")
     ticket_segments = relationship("TicketSegment", back_populates="line")
     train_route = relationship("TrainRoute", back_populates="line", uselist=False)  # One-to-one
 
@@ -134,45 +133,6 @@ class Route(Base):
     journey_segments = relationship("JourneySegment", back_populates="route")
 
     __table_args__ = (UniqueConstraint('line_id', 'from_station_id', 'to_station_id'),)
-
-class PassengerType(Base):
-    __tablename__ = "passenger_types"
-
-    id = Column(BIGINT, primary_key=True, index=True)
-    name = Column(String(50), nullable=False, unique=True)
-    description = Column(Text)
-    discount_percentage = Column(DECIMAL(5, 2), default=0.00)
-    age_min = Column(Integer)
-    age_max = Column(Integer)
-    requires_proof = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
-
-    fare_rules = relationship("FareRule", back_populates="passenger_type")
-    ticket_segments = relationship("TicketSegment", back_populates="passenger_type")
-
-class FareRule(Base):
-    __tablename__ = "fare_rules"
-
-    id = Column(BIGINT, primary_key=True, index=True)
-    line_id = Column(BIGINT, ForeignKey("train_lines.id"), nullable=False)
-    from_station_id = Column(BIGINT, ForeignKey("stations.id"), nullable=False)
-    to_station_id = Column(BIGINT, ForeignKey("stations.id"), nullable=False)
-    passenger_type_id = Column(BIGINT, ForeignKey("passenger_types.id"), nullable=False)
-    base_price = Column(DECIMAL(10, 2), nullable=False)
-    currency = Column(String(10), default="THB")
-    valid_from = Column(Date, default=func.current_date())
-    valid_to = Column(Date)
-    peak_hour_multiplier = Column(DECIMAL(4, 2), default=1.00)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
-
-    line = relationship("TrainLine", back_populates="fare_rules")
-    from_station = relationship("Station", foreign_keys=[from_station_id])
-    to_station = relationship("Station", foreign_keys=[to_station_id])
-    passenger_type = relationship("PassengerType", back_populates="fare_rules")
-
-    __table_args__ = (UniqueConstraint('line_id', 'from_station_id', 'to_station_id', 'passenger_type_id', 'valid_from'),)
 
 class Journey(Base):
     __tablename__ = "journeys"
@@ -263,8 +223,6 @@ class TicketSegment(Base):
     from_station_id = Column(BIGINT, ForeignKey("stations.id"), nullable=False)
     to_station_id = Column(BIGINT, ForeignKey("stations.id"), nullable=False)
     line_id = Column(BIGINT, ForeignKey("train_lines.id"), nullable=False)
-    passenger_type_id = Column(BIGINT, ForeignKey("passenger_types.id"), nullable=False)
-    fare_amount = Column(DECIMAL(10, 2), nullable=False)
     segment_order = Column(Integer, nullable=False)
     status = Column(String(50), default="valid")
     created_at = Column(DateTime, default=func.now())
@@ -274,7 +232,6 @@ class TicketSegment(Base):
     from_station = relationship("Station", foreign_keys=[from_station_id])
     to_station = relationship("Station", foreign_keys=[to_station_id])
     line = relationship("TrainLine", back_populates="ticket_segments")
-    passenger_type = relationship("PassengerType", back_populates="ticket_segments")
 
 # Train Route Management Models
 class TrainRoute(Base):
