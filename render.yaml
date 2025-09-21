@@ -7,20 +7,12 @@ services:
     startCommand: uvicorn src.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.11.9
       - key: DATABASE_URL
-        fromDatabase:
-          name: thakhinmala-db
-          property: connectionString
+        sync: false
       - key: SECRET_KEY
         generateValue: true
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
-        value: 30
+        value: "30"
       - key: ALGORITHM
         value: HS256
-
-databases:
-  - name: thakhinmala-db
-    databaseName: thakhinmala_train_booking
-    user: thakhinmala_user
-    plan: free
